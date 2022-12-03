@@ -4,7 +4,7 @@ import blender_plot as bp
 import blender_plot.functional as bpf
 
 import bpy
-from IPython import display
+# from IPython import display
 import pathlib
 
 
@@ -66,7 +66,7 @@ class Scene:
         bpy.ops.render.render(write_still=True)
 
         # TODO: detect IPython
-        return display.Image(str(filepath))
+        # return display.Image(str(filepath))
 
     def save(self, filepath="plot.blend"):
         """ Save the scene to a blend file """
