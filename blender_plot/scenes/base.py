@@ -125,5 +125,4 @@ class Scene:
         bpy.ops.object.modifier_apply(modifier="GeometryNodes")
 
         material = bp.utils.load_material(material)
-        obj.data.materials.append(None)
         obj.material_slots[0].material = material
