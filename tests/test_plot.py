@@ -1,5 +1,5 @@
 
-import blenderplot as bp
+import blender_plot as bp
 import numpy as np
 
 

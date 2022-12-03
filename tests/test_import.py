@@ -1,5 +1,5 @@
 
 
 def test_import():
-    import blenderplot as bp
+    import blender_plot as bp
     import bpy
