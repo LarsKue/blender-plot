@@ -69,7 +69,7 @@ class Scene:
         filepath.parent.mkdir(exist_ok=True, parents=True)
         bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
 
-    def scatter(self, data: np.ndarray, radius: float = 0.1, material: str = "rainbow"):
+    def scatter(self, data: np.ndarray, radius: float = 0.1, material: str = "rainbow", alpha: float = 1.0):
         match data.shape:
             case (n, 3):
                 pass
@@ -126,3 +126,6 @@ class Scene:
 
         material = bp.utils.load_material(material)
         obj.material_slots[0].material = material
+
+        # Set transparency
+        material.node_tree.nodes["Principled BSDF"].inputs["Alpha"].default_value = alpha

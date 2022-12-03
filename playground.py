@@ -19,8 +19,8 @@ z = rr * np.cos(tt)
 data = np.stack([x, y, z], axis=1)
 
 s = bp.DefaultScene()
-s.scatter(data, radius=0.01)
-s.save("blendfiles/standard_normal.blend")
+s.scatter(data, radius=0.01, material="rainbow", alpha=0.05)
 s.render("renders/standard_normal.png")
+s.save("blendfiles/standard_normal.blend")
 
 
