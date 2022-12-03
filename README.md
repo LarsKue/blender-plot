@@ -19,4 +19,7 @@ s.render("standard_normal.png", resolution=(1200, 1200))
 # save the scene to a .blend file
 s.save("standard_normal.blend")
 ```
+
+### Output:
+
 ![Output Image](examples/standard_normal.png)
