@@ -21,11 +21,10 @@ class Scene:
         for o in list(bpy.data.objects):
             bpy.data.objects.remove(o, do_unlink=True)
 
-        # bpy.context.window.scene = bpy.data.scenes.new("Scene")
-        # print(list(bpy.data.objects))
-
         # create a new camera
         camera_data = bpy.data.cameras.new("Camera")
+        camera_data.type = "ORTHO"
+        camera_data.ortho_scale = 10.0
         camera_object = bpy.data.objects.new(camera_data.name, camera_data)
 
         # look at data from positive quadrant

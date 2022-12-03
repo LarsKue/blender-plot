@@ -14,12 +14,12 @@ class DefaultScene(Scene):
 
         # use a sun as the light source
         light_data = bpy.data.lights.new("Light", type="SUN")
-        light_data.angle = np.deg2rad(30)
-        light_data.energy = 4.0
+        light_data.angle = np.deg2rad(45)
+        light_data.energy = 5.0
 
         # make object from data
         light_object = bpy.data.objects.new(light_data.name, light_data)
-        light_object.rotation_euler = tuple(np.deg2rad((30, 30, 30)))
+        light_object.rotation_euler = tuple(np.deg2rad((20, 20, 90)))
 
         # link the object
         bpy.context.collection.objects.link(light_object)
