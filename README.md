@@ -1,7 +1,10 @@
 # blender-plot
 A High-Level Plotting Interface for Blender in Python.
 
-### Example:
+## Install:
+`pip install blender-plot`
+
+## Example:
 
 ```python
 import blender_plot as bp
