@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "blender-plot"
+version = "0.0.1"
+authors = [
+    { name = "Lars Kuehmichel", email="lars.kuehmichel@stud.uni-heidelberg.de" },
+    { name = "Philipp Koehler", email="philipp@pvplanet.net" },
+]
+description = "A High-Level Plotting Interface for Blender in Python."
+readme = "README.md"
+requires-python = "~=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "bpy == 3.4.0b2",
+    "fake-bpy-module-latest",
+]
+
+[project.optional-dependencies]
+dev = [
+    "jupyterlab ~= 3.5.0",
+    "numpy ~= 1.23.5",
+    "matplotlib ~= 3.6.2",
+]
+test = [
+    "coverage ~= 6.5.0",
+    "pytest ~= 7.2.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/LarsKue/blender-plot"
+"Bug Tracker" = "https://github.com/LarsKue/blender-plot/issues"
+
+[tool.setuptools]
+py-modules = ["blender_plot"]

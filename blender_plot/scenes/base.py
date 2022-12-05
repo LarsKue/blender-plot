@@ -11,13 +11,30 @@ import numpy as np
 
 class Scene:
     """ Base Scene, empty by default """
+
     def __init__(self):
         # create new blender scene
-        bpy.context.window.scene = bpy.data.scenes.new(self.__class__.__name__)
+        self.blender_scene = bpy.data.scenes.new(self.__class__.__name__)
         self.clear()
+
+    def __del__(self):
+        # delete the blender scene
+        self.activate()
+        # FIXME: in interactive python session, this gives an error upon quitting
+        bpy.ops.scene.delete()
+
+    def activate(self):
+        """ Activate the scene in blender """
+        bpy.context.window.scene = self.blender_scene
+
+    @property
+    def active(self):
+        """ Returns if the current scene is the active one """
+        return bpy.context.window.scene is self.blender_scene
 
     def clear(self):
         """ Return the Scene to its default state """
+        self.activate()
         for o in list(bpy.data.objects):
             bpy.data.objects.remove(o, do_unlink=True)
 
@@ -42,6 +59,8 @@ class Scene:
 
     def render(self, filepath="render.png", resolution=(800, 600), device="gpu", samples=16):
         """ Render the scene to an image or video """
+        self.activate()
+
         filepath = pathlib.Path(filepath).resolve()
 
         bpy.context.scene.render.engine = "CYCLES"
@@ -64,11 +83,22 @@ class Scene:
 
     def save(self, filepath="plot.blend"):
         """ Save the scene to a blend file """
-        filepath = pathlib.Path(filepath).resolve()
+        self.activate()
+
+        filepath = pathlib.Path(filepath).with_suffix(".blend").resolve()
         filepath.parent.mkdir(exist_ok=True, parents=True)
         bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
 
+    def load(self, filepath):
+        """ Load a scene from a blend file """
+        self.activate()
+
+        filepath = pathlib.Path(filepath).with_suffix(".blend").resolve()
+        bpy.ops.wm.open_mainfile(filepath=str(filepath))
+
     def scatter(self, data: np.ndarray, radius: float = 0.1, material: str = "rainbow", alpha: float = 1.0):
+        self.activate()
+
         match data.shape:
             case (n, 3):
                 pass
