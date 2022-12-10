@@ -5,7 +5,7 @@ import bpy
 import numpy as np
 
 
-def scatter(scene: bp.scenes.Scene, data: np.array, radius: float = 0.1, material: str = "rainbow", alpha: float = None):
+def scatter(scene: bp.scenes.Scene, data: np.array, radius: float = 0.1, material: str = "rainbow", hue: float | np.ndarray = None, alpha: float | np.ndarray = None):
     scene.activate()
 
     match data.shape:
@@ -22,6 +22,12 @@ def scatter(scene: bp.scenes.Scene, data: np.array, radius: float = 0.1, materia
     bpy.context.scene.collection.objects.link(obj)
 
     mesh.from_pydata(data.tolist(), (), ())
+
+    # Setup material
+    material = bp.utils.get_material(material)
+    material.apply_to(obj, hue, alpha)
+    material.blender_material.use_backface_culling = True
+    material.blender_material.blend_method = "BLEND"
 
     bpy.ops.mesh.primitive_ico_sphere_add(
         radius=radius,
@@ -48,30 +54,23 @@ def scatter(scene: bp.scenes.Scene, data: np.array, radius: float = 0.1, materia
     object_info.location = (0, -200)
     object_info.inputs[0].default_value = icosphere
 
-    realize = node_group.nodes.new("GeometryNodeRealizeInstances")
-    realize.location = (400, 0)
+    # realize = node_group.nodes.new("GeometryNodeRealizeInstances")
+    # realize.location = (400, 0)
+
+    material_node = node_group.nodes.new("GeometryNodeSetMaterial")
+    material_node.location = (400, 0)
+    material_node.inputs[2].default_value = material.blender_material
 
     node_group.links.new(in_node.outputs[0], points_node.inputs["Points"])
 
     node_group.links.new(object_info.outputs["Geometry"], points_node.inputs["Instance"])
     node_group.links.new(object_info.outputs["Scale"], points_node.inputs["Scale"])
 
-    node_group.links.new(points_node.outputs["Instances"], realize.inputs["Geometry"])
+    node_group.links.new(points_node.outputs["Instances"], material_node.inputs["Geometry"])
 
-    node_group.links.new(realize.outputs["Geometry"], out_node.inputs[0])
+    node_group.links.new(material_node.outputs["Geometry"], out_node.inputs[0])
 
     modifier = obj.modifiers.new("GeometryNodes", "NODES")
     modifier.node_group = node_group
 
     bpy.context.view_layer.objects.active = obj
-    bpy.ops.object.modifier_apply(modifier="GeometryNodes")
-
-    blender_material = bp.utils.get_material(material).blender_material
-    obj.material_slots[0].material = blender_material
-
-    # Set transparency
-    if alpha is not None:
-        try:
-            blender_material.node_tree.nodes["Principled BSDF"].inputs["Alpha"].default_value = alpha
-        except AttributeError:
-            raise RuntimeError(f"Material {material} does not support alpha.")

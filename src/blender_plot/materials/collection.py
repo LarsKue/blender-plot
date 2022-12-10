@@ -20,3 +20,5 @@ rainbow = StaticMaterial(filepath=static_materials, name="rainbow")
 
 red = SolidColorMaterial(color=Color.Red, name="Solid Red")
 red_blue = GradientMaterial(colors=[Color.Red, Color.Blue], name="Red Blue")
+
+
