@@ -18,8 +18,6 @@ def look_at(focus: mathutils.Vector, camera: bpy.types.Camera | None = None):
 
 def get_material(material: str) -> bp.materials.Material:
     try:
-        material = getattr(bp.materials.collection, material)
-        print(material)
-        return material
+        return getattr(bp.materials.collection, material)
     except AttributeError:
         raise ValueError(f"No such material: {material}")
