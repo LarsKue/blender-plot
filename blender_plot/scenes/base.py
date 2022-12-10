@@ -1,4 +1,5 @@
 import mathutils
+import subprocess
 
 import blender_plot as bp
 
@@ -95,6 +96,16 @@ class Scene:
 
         filepath = pathlib.Path(filepath).with_suffix(".blend").resolve()
         bpy.ops.wm.open_mainfile(filepath=str(filepath))
+
+    def open(self):
+        """ Open the last saved scene in your locally installed Blender """
+        self.activate()
+        if not bpy.data.is_saved:
+            print("The current scene is not saved, please use .save before opening it in Blender")
+            return
+
+        current_file = bpy.data.filepath
+        subprocess.run(["blender", current_file])
 
     def scatter(self, data: np.ndarray, radius: float = 0.1, material: str = "rainbow", alpha: float = 1.0):
         self.activate()
