@@ -31,11 +31,16 @@ dev = [
 test = [
     "coverage ~= 6.5.0",
     "pytest ~= 7.2.0",
+    "mypy ~= 0.991"
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/LarsKue/blender-plot"
 "Bug Tracker" = "https://github.com/LarsKue/blender-plot/issues"
 
-[tool.setuptools]
-py-modules = ["blender_plot"]
+[tool.mypy]
+mypy_path="blender_plot"
+
+[tool.setuptools.package-data]
+# include blend files as package data
+blender_plot = ["*.blend"]

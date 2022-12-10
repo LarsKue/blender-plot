@@ -1,13 +1,11 @@
-import mathutils
-import subprocess
 
 import blender_plot as bp
 
 import bpy
-# from IPython import display
 import pathlib
-
-import numpy as np
+import mathutils
+import subprocess
+import tempfile
 
 
 class Scene:
@@ -20,9 +18,7 @@ class Scene:
 
     def __del__(self):
         # delete the blender scene
-        self.activate()
-        # FIXME: in interactive python session, this gives an error upon quitting
-        bpy.ops.scene.delete()
+        bpy.data.scenes.remove(self.blender_scene)
 
     def activate(self):
         """ Activate the scene in blender """
@@ -101,71 +97,11 @@ class Scene:
         """ Open the last saved scene in your locally installed Blender """
         self.activate()
         if not bpy.data.is_saved:
-            print("The current scene is not saved, please use .save before opening it in Blender")
-            return
+            temp_file = tempfile.TemporaryFile(suffix=".blend")
+            self.save(str(temp_file))
 
         current_file = bpy.data.filepath
         subprocess.run(["blender", current_file])
 
-    def scatter(self, data: np.ndarray, radius: float = 0.1, material: str = "rainbow", alpha: float = 1.0):
-        self.activate()
-
-        match data.shape:
-            case (n, 3):
-                pass
-            case shape:
-                raise ValueError(f"Data has incorrect shape: {shape}")
-
-        mesh = bpy.data.meshes.new(f"mesh")
-        obj = bpy.data.objects.new(mesh.name, mesh)
-        bpy.context.scene.collection.objects.link(obj)
-
-        mesh.from_pydata(data.tolist(), (), ())
-
-        bpy.ops.mesh.primitive_ico_sphere_add(
-            radius=radius,
-        )
-        # TODO: improve getting icosphere
-        icosphere = bpy.data.objects.get("Icosphere")
-        bpy.ops.object.shade_smooth()
-        icosphere.hide_set(True)
-        icosphere.hide_render = True
-
-        node_group = bpy.data.node_groups.new("GeometryNodes", "GeometryNodeTree")
-
-        in_node = node_group.nodes.new("NodeGroupInput")
-        in_node.location = (0, 0)
-
-        out_node = node_group.nodes.new("NodeGroupOutput")
-        out_node.location = (600, 0)
-
-        points_node = node_group.nodes.new("GeometryNodeInstanceOnPoints")
-        points_node.location = (200, 0)
-
-        object_info = node_group.nodes.new("GeometryNodeObjectInfo")
-        object_info.location = (0, -200)
-        object_info.inputs[0].default_value = icosphere
-
-        realize = node_group.nodes.new("GeometryNodeRealizeInstances")
-        realize.location = (400, 0)
-
-        node_group.links.new(in_node.outputs[0], points_node.inputs["Points"])
-
-        node_group.links.new(object_info.outputs["Geometry"], points_node.inputs["Instance"])
-        node_group.links.new(object_info.outputs["Scale"], points_node.inputs["Scale"])
-
-        node_group.links.new(points_node.outputs["Instances"], realize.inputs["Geometry"])
-
-        node_group.links.new(realize.outputs["Geometry"], out_node.inputs[0])
-
-        modifier = obj.modifiers.new("GeometryNodes", "NODES")
-        modifier.node_group = node_group
-
-        bpy.context.view_layer.objects.active = obj
-        bpy.ops.object.modifier_apply(modifier="GeometryNodes")
-
-        material = bp.utils.load_material(material)
-        obj.material_slots[0].material = material
-
-        # Set transparency
-        material.node_tree.nodes["Principled BSDF"].inputs["Alpha"].default_value = alpha
+    def scatter(self, *args, **kwargs):
+        return bp.scatter(self, *args, **kwargs)

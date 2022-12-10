@@ -1,8 +1,5 @@
 
-import blender_plot as bp
-
-import pytest
-import bpy
+# TODO
 
 
 class TestPlots:
