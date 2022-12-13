@@ -54,23 +54,25 @@ def scatter(scene: bp.scenes.Scene, data: np.array, radius: float = 0.1, materia
     object_info.location = (0, -200)
     object_info.inputs[0].default_value = icosphere
 
-    # realize = node_group.nodes.new("GeometryNodeRealizeInstances")
-    # realize.location = (400, 0)
-
     material_node = node_group.nodes.new("GeometryNodeSetMaterial")
     material_node.location = (400, 0)
     material_node.inputs[2].default_value = material.blender_material
 
-    node_group.links.new(in_node.outputs[0], points_node.inputs["Points"])
+    # realize = node_group.nodes.new("GeometryNodeRealizeInstances")
+    # realize.location = (400, 200)
+    # material_node = realize
 
+    node_group.links.new(in_node.outputs[0], points_node.inputs["Points"])
     node_group.links.new(object_info.outputs["Geometry"], points_node.inputs["Instance"])
     node_group.links.new(object_info.outputs["Scale"], points_node.inputs["Scale"])
-
     node_group.links.new(points_node.outputs["Instances"], material_node.inputs["Geometry"])
-
     node_group.links.new(material_node.outputs["Geometry"], out_node.inputs[0])
 
     modifier = obj.modifiers.new("GeometryNodes", "NODES")
     modifier.node_group = node_group
 
     bpy.context.view_layer.objects.active = obj
+
+    # Set material shading in 3D viewport
+    area = [area for area in bpy.context.screen.areas if area.type == 'VIEW_3D'][0]
+    area.spaces.active.shading.type = 'MATERIAL'

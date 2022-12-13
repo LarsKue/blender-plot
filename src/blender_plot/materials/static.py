@@ -21,3 +21,6 @@ class StaticMaterial(Material):
         blender_material = bpy.data.materials.get(name)
 
         super().__init__(blender_material)
+
+    def apply_to(self, obj: bpy.types.Object, *args, **kwargs):
+        pass

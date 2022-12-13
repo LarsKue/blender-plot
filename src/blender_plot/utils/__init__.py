@@ -1,5 +1,7 @@
 
 from .core import (
-    look_at,
+    vertices_to_array,
     get_material,
+    look_at,
+    normalize,
 )

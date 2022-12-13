@@ -101,7 +101,7 @@ class Scene:
             self.save(str(temp_file))
 
         current_file = bpy.data.filepath
-        subprocess.run(["blender", current_file])
+        subprocess.run(["blender", current_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     def scatter(self, *args, **kwargs):
         return bp.scatter(self, *args, **kwargs)
